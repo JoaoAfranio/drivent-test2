@@ -26,18 +26,18 @@ async function createBooking(userId: number, roomId: number) {
 async function updateBooking(userId: number, roomId: number, bookingId: number) {
   await validateIfUserCanBook(userId);
   await validateRoomBooking(roomId);
-  await validateIfUserCanUpdateBooking(userId);
+  await validateIfUserCanUpdateBooking(userId, bookingId);
 
   const updatedBooking = await bookingRepository.updateBooking(roomId, bookingId);
 
   return { bookingId: updatedBooking.id };
 }
 
-async function validateIfUserCanUpdateBooking(userId: number) {
-  const userBooking = await bookingRepository.findBookingByUser(userId);
-  if (!userBooking) throw userCannotBooking();
+async function validateIfUserCanUpdateBooking(userId: number, bookingId: number) {
+  const booking = await bookingRepository.findBookingById(bookingId);
+  if (!booking) throw userCannotBooking();
 
-  if (userBooking.userId !== userId) throw userCannotBooking();
+  if (booking.userId !== userId) throw userCannotBooking();
 }
 
 async function validateRoomBooking(roomId: number) {
